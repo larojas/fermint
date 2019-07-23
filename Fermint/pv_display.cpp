@@ -12,10 +12,6 @@ void PvDisplay::draw_value(const char* val, bool selected) {
   oled_.set_font(FONT_BIGNUM);
   y_bottom += oled_.get_font_height();
   oled_.print_at(val, x_, y_bottom);
-  if (selected) {
-    oled_.mode(OLED_WHITE);
-  } else {
-    oled_.mode(OLED_BLACK);
-  }
+  oled_.mode(selected ? OLED_WHITE : OLED_BLACK);
   oled_.hline(x_, y_bottom + 2, SELECTED_SZ);
 }

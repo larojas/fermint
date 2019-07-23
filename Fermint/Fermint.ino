@@ -55,6 +55,8 @@ void show_splash() {
   oled.set_font(FONT_SMALL);
   oled.print_at("Chongolele", 30, 9);
   oled.show();
+  delay(3000);
+  oled.clear();
 }
 
 void show_temps() {

@@ -30,6 +30,11 @@ void Oled::begin() {
   u8g2.begin();
 }
 
+void Oled::clear(bool clearDisplay) {
+  u8g2.clearBuffer();
+  if (clearDisplay) show();
+}
+
 void Oled::print_at(const char* str, uint8_t x, uint8_t y) {
   u8g2.drawStr(x, y, str);
   col_ = x;

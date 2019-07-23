@@ -47,6 +47,7 @@ class Oled {
 
   Oled();
   void begin();
+  void clear(bool clearDisplay=false);
   void print_at(const char* str, uint8_t x, uint8_t y);
   void print(const char* str);
   void print_next(const char* str);
