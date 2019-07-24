@@ -23,3 +23,4 @@ upload:
 clean:
 	rm -rf build/*
 	rm -f *.hex *.elf
+	rm *~
