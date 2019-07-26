@@ -38,8 +38,8 @@ void KeyManager::loop() {
 	// prior key still pressed
 	unsigned long delta = now - key_down_millis_;
 	if (delta > REPEAT_DELAY_MS) {
-	  active_menu_->on_key(KEY_DOWN, key_down_type_, delta - REPEAT_DELAY_MS);
-	  
+	  active_menu_->on_key(KEY_DOWN, key_down_type_,
+			       delta - REPEAT_DELAY_MS);
 	}
       }
     } else {
