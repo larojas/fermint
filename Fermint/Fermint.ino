@@ -25,6 +25,7 @@
 #include "oled.h"
 #include "graph.h"
 #include "pv_display.h"
+#include "menu.h"
 
 Temp temp;
 Oled oled;
@@ -46,6 +47,7 @@ void setup(void) {
   //show_splash();
   graph.v_axis().set_scale(PLOT_MIN, PLOT_MAX, AXIS_TICKS);
   graph.begin();
+  Menu::begin(&oled);
   oled.show();
 
   pinMode(PIN_TOGGLE_UP, INPUT_PULLUP);
