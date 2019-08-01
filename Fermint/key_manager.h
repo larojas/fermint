@@ -5,35 +5,34 @@
 
 // Delay before a key is repeated
 #define REPEAT_DELAY_MS 1000
-
+// Interval for repeated actions
+#define REPEAT_INTERVAL_MS 250
 
 class Menu;
 
 enum KeyPos {
   KEY_UP,
-  KEY_DOWN
+  KEY_DOWN,
+  KEY_REPEAT
 };
 
+// Here you define the digital pin where the buttons are connected.
 enum KeyType {
-  KEY_LEFT,
-  KEY_RIGHT,
-  KEY_ENTER,
-  KEY_NONE = 99
+  KEY_LEFT=0,
+  KEY_RIGHT=3,
+  KEY_ENTER=0,
+  KEY_NONE=0
 };
-
-#define NUM_KEYS (sizeof(KeyType)/sizeof(KEY_NONE) - 1)
 
 class KeyManager {
  public:
-  KeyManager(const uint8_t* key_pin_map);
+  KeyManager();
   void loop();
  private:
-  void key_down(KeyType type, unsigned long now);
   void key_up(unsigned long now);
+  bool is_down(int pin) { return digitalRead(pin) == LOW; }
   
-  const uint8_t* map_;
-  unsigned long key_down_millis_;
-  unsigned long last_action_millis_;
+  unsigned long next_action_millis_;
   KeyType key_down_type_;
   Menu* active_menu_;
 };

@@ -44,7 +44,7 @@ void setup(void) {
   Serial.println("Starting!");
   temp.begin();
   oled.begin();
-  //show_splash();
+  show_splash();
   graph.v_axis().set_scale(PLOT_MIN, PLOT_MAX, AXIS_TICKS);
   graph.begin();
   Menu::begin(&oled);

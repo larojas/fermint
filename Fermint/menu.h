@@ -9,9 +9,7 @@ class Oled;
 
 class Menu {
  public:
-  virtual bool on_key(KeyPos pos, KeyType type, unsigned long len) {
-    return false;
-  }
+  virtual void on_key(KeyPos pos, KeyType type) {}
   static void begin(Oled* oled) { oled_ = oled; }
   static Oled& oled() { return *oled_; }
  private:
@@ -22,7 +20,7 @@ class Menu {
 template<class T> class NumberMenu : public Menu {
  public:
   NumberMenu(T initial);
-  bool on_key(KeyPos pos, KeyType type, unsigned long len) override;
+  void on_key(KeyPos pos, KeyType type) override;
 
  private:
   T value_;
@@ -35,12 +33,18 @@ template<class T> class NumberMenu : public Menu {
 class OptionsMenu : public Menu {
  public:
   OptionsMenu(const char** options, uint8_t sz);
-  bool on_key(KeyPos pos, KeyType type, unsigned long len) override;
+  void on_key(KeyPos pos, KeyType type) override;
 
  private:
   const char** options_;
   uint8_t sz_;
   uint8_t selected_;
+};
+
+class PvDisplayMenu : public Menu {
+ public:
+  PvDisplayMenu() {}
+  //TODO: finish
 };
 
 #endif // MENU_H
