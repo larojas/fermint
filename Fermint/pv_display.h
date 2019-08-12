@@ -10,13 +10,14 @@ using Util::dim;
 
 class PvDisplay {
  public:
-  PvDisplay(const char* name, dim x, dim y, Oled& oled);
-  void draw_value(const char* val, bool selected=false);
+  PvDisplay(const char* name, dim x, dim y);
+  void set(float val);
+  void draw_value(bool selected, Oled& oled);
  private:
   const char* const name_;
   dim x_;
   dim y_;
-  Oled& oled_;
+  float val_;
 };
 
 #endif // PV_DISPLAY_H

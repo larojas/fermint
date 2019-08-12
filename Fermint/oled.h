@@ -30,6 +30,9 @@ extern char OLED_DEBUG_STR[];
 #  define OLED_DEBUG(...)
 #endif // OLED_DEBUG_ENABLE
 
+#include "util.h"
+using Util::dim;
+
 enum OledFont {
   FONT_AXIS,
   FONT_BIGNUM,
@@ -48,23 +51,24 @@ class Oled {
   Oled();
   void begin();
   void clear(bool clearDisplay=false);
-  void print_at(const char* str, uint8_t x, uint8_t y);
+  void print_at(const char* str, dim x, dim y);
+  void print_boxed(const char* str, dim x, dim y, dim w, dim h, OledColor fg);
   void print(const char* str);
   void print_next(const char* str);
   void set_font(OledFont);
-  uint8_t get_font_height();
-  void vline(uint8_t x, uint8_t y, uint8_t len);
-  void hline(uint8_t x, uint8_t y, uint8_t len);
-  void line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2);
-  void set_pixel(uint8_t x, uint8_t y);
+  dim get_font_height();
+  void vline(dim x, dim y, dim len);
+  void hline(dim x, dim y, dim len);
+  void line(dim x1, dim y1, dim x2, dim y2);
+  void set_pixel(dim x, dim y);
   void mode(OledColor);
   void debug_display(bool enable);
   void show();
 
  private:
-  uint8_t pitch_;
-  uint8_t row_;
-  uint8_t col_;
+  dim pitch_;
+  dim row_;
+  dim col_;
   bool debug_;
 };
 

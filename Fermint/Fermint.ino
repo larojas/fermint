@@ -12,14 +12,14 @@
 
 */
 
-#define LOOP_DELAY_MS 100
+#define LOOP_DELAY_MS 10
 #define GRAPH_LEFT 21
 #define PLOT_MIN 70
 #define PLOT_MAX 90
 #define AXIS_TICKS 5
 #define PV_SPACE 45
 #define PIN_TOGGLE_UP 3
-#define POLL_INTERVAL_MS 60000
+#define POLL_INTERVAL_MS 10000
 
 #include "temp.h"
 #include "oled.h"
@@ -30,12 +30,11 @@
 Temp temp;
 Oled oled;
 Graph graph(GRAPH_LEFT, 34, 127 - GRAPH_LEFT, 83, oled);
-PvDisplay pv[] = {{"PV1", 0, 0, oled},
-		  {"PV2", PV_SPACE, 0, oled},
-		  {"PV3", PV_SPACE * 2, 0, oled}};
+PvDisplay pv[] = {{"PV1", 0, 0},
+		  {"PV2", PV_SPACE, 0},
+		  {"PV3", PV_SPACE * 2, 0}};
 #define PV_CNT (sizeof(pv)/sizeof(PvDisplay))
-uint8_t toggle_up_state = 1;
-uint8_t active = 0;
+PvDisplayMenu pv_menu(pv, PV_CNT);
 unsigned long last_poll;
 
 void setup(void) {
@@ -47,62 +46,52 @@ void setup(void) {
   show_splash();
   graph.v_axis().set_scale(PLOT_MIN, PLOT_MAX, AXIS_TICKS);
   graph.begin();
-  Menu::begin(&oled);
+  Menu::begin(&pv_menu, &oled);
+  KeyManager::begin();
+  draw_temps(/*with_read*/true);
   oled.show();
-
-  pinMode(PIN_TOGGLE_UP, INPUT_PULLUP);
 }
 
 void show_splash() {
-  oled.set_font(FONT_SMALL);
-  oled.print_at("Chongolele", 30, 9);
+  oled.set_font(FONT_BIG);
+  oled.print_at("Chongolele!", 30, 20);
   oled.show();
   delay(3000);
   oled.clear();
 }
 
-void show_temps() {
-  char temp_str[] = "Temp: 999.9f";
-  /*
-  for (uint8_t i = 0; i < PV_CNT; ++i) {
-    float tf = temp.get_f(i);
-    sprintf(temp_str, "%3.1f", tf > -100? tf : 0.0);
-    pv[i].draw_value(temp_str);
+void draw_temps(bool with_read) {
+  if (with_read) {
+    pv[0].set(temp.get_f(0));
+    pv[1].set(0.0);
+    pv[2].set(123.4);
   }
-  */
-  
-  float tf = temp.get_f(0);
-  sprintf(temp_str, "%05.1f", tf > -100? tf : 0.0);
-  pv[0].draw_value(temp_str, active == 0);
-  pv[1].draw_value("000.0", active == 1);
-  pv[2].draw_value("123.4", active == 2);
-  oled.show();
+  pv_menu.draw();
 }
 
-void loop(void) {
-  uint8_t toggle = digitalRead(PIN_TOGGLE_UP);
-  if (toggle != toggle_up_state) {
-    if (toggle) {
-      active++;
-      if (active >= 3) active = 0;
-      show_temps();
-    }
-    toggle_up_state = toggle;
-  }
-
-  unsigned long time = millis();
-  if (time > last_poll + POLL_INTERVAL_MS) {
-    if (time > last_poll + 2 * POLL_INTERVAL_MS) {
+void poll_temps(unsigned long now) {
+  if (now > last_poll + POLL_INTERVAL_MS) {
+    if (now > last_poll + 2 * POLL_INTERVAL_MS) {
       // if too far behind, just match current time
-      last_poll = time;
+      last_poll = now;
     } else {
       // try to keep up
       last_poll += POLL_INTERVAL_MS;
     }
+    oled.set_font(FONT_BIG);
+    oled.print_boxed("POLLING", 2, 0, 124, 25, OLED_BLACK);
+    oled.show();
     temp.poll();
-    float temp_f = temp.get_f(0);
-    show_temps();
-    graph.plot(temp_f);
+    oled.print_boxed("", 2, 0, 124, 25, OLED_WHITE);
+    draw_temps(/*with_read*/true);
+    graph.plot(temp.get_f(0));
+    oled.show();
   }
-  //delay(LOOP_DELAY_MS);
+}
+
+void loop(void) {
+  unsigned long now = millis();
+  KeyManager::loop(now);
+  poll_temps(now);
+  delay(LOOP_DELAY_MS);
 }

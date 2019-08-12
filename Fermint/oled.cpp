@@ -35,10 +35,20 @@ void Oled::clear(bool clearDisplay) {
   if (clearDisplay) show();
 }
 
-void Oled::print_at(const char* str, uint8_t x, uint8_t y) {
+void Oled::print_at(const char* str, dim x, dim y) {
   u8g2.drawStr(x, y, str);
   col_ = x;
   row_ = y;
+}
+
+void Oled::print_boxed(const char* str, dim x, dim y, dim w, dim h, OledColor fg) {
+  unsigned int str_w = u8g2.getStrWidth(str);
+  mode(fg == OLED_WHITE ? OLED_BLACK : OLED_WHITE);
+  u8g2.drawBox(x, y, w, h);
+  mode(fg);
+  u8g2.setFontPosCenter();
+  print_at(str, x + ((w - str_w) >> 1), y + (h >> 1));
+  u8g2.setFontPosBaseline();
 }
 
 void Oled::print(const char* str) {
@@ -71,25 +81,25 @@ void Oled::set_font(OledFont font) {
   mode(OLED_WHITE);
 }
 
-uint8_t Oled::get_font_height() {
+dim Oled::get_font_height() {
   return pitch_;
 }
 
 
-void Oled::vline(uint8_t x, uint8_t y, uint8_t len) {
+void Oled::vline(dim x, dim y, dim len) {
   u8g2.drawVLine(x, y, len);
 }
 
-void Oled::hline(uint8_t x, uint8_t y, uint8_t len) {
+void Oled::hline(dim x, dim y, dim len) {
   u8g2.drawHLine(x, y, len);
 }
 
-void Oled::line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2) {
+void Oled::line(dim x1, dim y1, dim x2, dim y2) {
   u8g2.drawLine(x1, y1, x2, y2);
 }
 
 
-void Oled::set_pixel(uint8_t x, uint8_t y) {
+void Oled::set_pixel(dim x, dim y) {
   u8g2.drawPixel(x, y);
 }
 

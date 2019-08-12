@@ -1,6 +1,8 @@
 BOARD := "Intel:arc32:arduino_101"
 PORT := "/dev/tty.wchusbserial1430"
-CLI = /usr/local/bin/arduino-cli-0.3.7-alpha.preview-linux64
+#PORT := "COM3"
+CLI = /usr/local/bin/arduino-cli
+#CLI=arduino-cli.exe
 
 src=$(wildcard *.cpp)
 
@@ -15,7 +17,6 @@ compile: Fermint.ino $(src)
 upload:
 	test -e $(PORT) || { echo "Port not found!"; exit 1; }
 	$(MAKE) compile
-
 	$(CLI) upload  --fqbn $(BOARD) -p $(PORT) .
 
 .PHONY: clean
